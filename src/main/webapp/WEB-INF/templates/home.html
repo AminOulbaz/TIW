@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="it">
+<head>
+    <meta charset="UTF-8">
+    <title>Home - Portale Università</title>
+    <link rel="stylesheet" th:href="@{/css/home.css}">
+</head>
+<body>
+<header>
+    <h1>Benvenuto, <span th:text="${session.user.username}">Utente</span>!</h1>
+</header>
+
+<hr>
+
+<article th:switch="${session.user.role.description}">
+    <!-- Sezione visibile solo ai DOCENTI -->
+    <section th:case="'docente'">
+        <h2>I tuoi corsi gestiti</h2>
+        <table border="1">
+            <thead>
+            <tr>
+                <th>Codice</th>
+                <th>Nome Corso</th>
+                <th>CFU</th>
+                <th>Anno</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="corso : ${corsiGestiti}">
+                <td th:text="${corso.codice}">INF101</td>
+                <td th:text="${corso.nome}">Programmazione 1</td>
+                <td th:text="${corso.cfu}">6</td>
+                <td th:text="${corso.anno}">1</td>
+            </tr>
+            </tbody>
+        </table>
+    </section>
+
+    <!-- Sezione visibile solo agli STUDENTI -->
+    <section th:case="'studente'">
+        <h2>I tuoi corsi nel piano di studi</h2>
+        <table border="1">
+            <thead>
+            <tr>
+                <th>Codice</th>
+                <th>Nome Corso</th>
+                <th>Docente</th>
+                <th>CFU</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="corso : ${corsiIscritto}">
+                <td th:text="${corso.codice}">INF101</td>
+                <td th:text="${corso.nome}">Analisi 1</td>
+                <td th:text="${corso.docente.nome}">Rossi</td>
+                <td th:text="${corso.cfu}">6</td>
+            </tr>
+            </tbody>
+        </table>
+    </section>
+</article>
+
+<hr>
+
+<footer>
+    <form th:action="@{/logout}" method="post">
+        <button type="submit">Logout</button>
+    </form>
+</footer>
+</body>
+</html>
