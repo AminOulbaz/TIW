@@ -27,4 +27,12 @@ public enum Vote {
     public String getLabel() {
         return label;
     }
+    public static Vote fromLabel(String label) {
+        for (Vote status : Vote.values()) {
+            if (status.getLabel().equalsIgnoreCase(label)) {
+                return status;
+            }
+        }
+        throw new IllegalArgumentException("no vote associated to " + label);
+    }
 }

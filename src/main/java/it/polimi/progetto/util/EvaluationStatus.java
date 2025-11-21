@@ -14,4 +14,12 @@ public enum EvaluationStatus {
     public String getMeaning() {
         return meaning;
     }
+    public static EvaluationStatus fromMeaning(String meaning) {
+        for (EvaluationStatus status : EvaluationStatus.values()) {
+            if (status.getMeaning().equalsIgnoreCase(meaning)) {
+                return status;
+            }
+        }
+        throw new IllegalArgumentException("no status associated to " + meaning);
+    }
 }

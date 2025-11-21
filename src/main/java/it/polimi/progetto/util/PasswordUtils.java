@@ -13,11 +13,11 @@ public class PasswordUtils {
     }
 
     public static void main(String[] args) {
-        String password = "test";
+        String password = "password";
         String hash = hashPassword(password);
 
         System.out.println("Hash: " + hash);
-        System.out.println("Verifica: " + checkPassword("test", hash)); // true
+        System.out.println("Verifica: " + checkPassword("password", hash)); // true
         System.out.println("Verifica: " + checkPassword("altraPassword", hash));  // false
     }
 }
