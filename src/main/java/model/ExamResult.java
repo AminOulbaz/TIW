@@ -1,6 +1,6 @@
 package model;
 
-public class ExamResult {
+public class ExamResult{
     private String studentId;
     private int examId;
     private ExamStatus status;
@@ -38,6 +38,35 @@ public class ExamResult {
 
     public void setGrade(ExamGrade grade) {
         this.grade = grade;
+    }
+
+    @Override
+    protected ExamResult clone(){
+        ExamResult examResult = new ExamResult();
+        examResult.setExamId(this.examId);
+        examResult.setStudentId(this.studentId);
+        examResult.setStatus(this.status);
+        examResult.setGrade(this.grade);
+        return examResult;
+    }
+
+    public ExamResult getDifferentExamResultWithDifferentStatus(ExamStatus status){
+        ExamResult examResult = clone();
+        examResult.setStatus(status);
+        return examResult;
+    }
+    public ExamResult getDifferentExamResultWithDifferentGrade(ExamGrade grade){
+        ExamResult examResult = clone();
+        examResult.setGrade(grade);
+        return examResult;
+    }
+    public ExamResult getExamResultWithDifferentStatus(ExamStatus status){
+        setStatus(status);
+        return this;
+    }
+    public ExamResult getExamResultWithDifferentGrade(ExamGrade grade){
+        setGrade(grade);
+        return this;
     }
 
     @Override

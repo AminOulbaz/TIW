@@ -1,6 +1,7 @@
 package dao;
 
 import model.Course;
+import model.Student;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -25,7 +26,7 @@ public class CourseDaoImpl implements CourseDao {
         try{
             PreparedStatement psmt = connection.prepareStatement(
                     """
-                select course_id, name, credits, degree_program_id
+                select course_id, name, credits, degree_program_code
                 from course
                 where professor_id = ?
 """
@@ -38,7 +39,7 @@ public class CourseDaoImpl implements CourseDao {
                 course.setCode(rs.getString("course_id"));
                 course.setName(rs.getString("name"));
                 course.setCredits(rs.getInt("credits"));
-                course.setDegreeProgramId(rs.getInt("degree_program_id"));
+                course.setDegreeProgramCode(rs.getString("degree_program_code"));
                 courses.add(course);
             }
             return courses;
@@ -47,12 +48,54 @@ public class CourseDaoImpl implements CourseDao {
         }
     }
 
-    /**
-     * @param courseId
-     * @return
-     */
     @Override
-    public Course getCourseById(int courseId) {
-        return null;
+    public List<Course> getCourseByDegreeCode(String degreeCode) {
+        try{
+            PreparedStatement psmt = connection.prepareStatement("""
+                select course_id, name, credits, professor_id
+                from course
+                where degree_program_code = ?
+""");
+            psmt.setString(1, degreeCode);
+            ResultSet rs = psmt.executeQuery();
+            List<Course> courses = new ArrayList<>();
+            while(rs.next()){
+                Course course = new Course();
+                course.setCode(rs.getString("course_id"));
+                course.setName(rs.getString("name"));
+                course.setCredits(rs.getFloat("credits"));
+                course.setProfessorId(rs.getString("professor_id"));
+                course.setDegreeProgramCode(degreeCode);
+                courses.add(course);
+            }
+            return courses;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public Course getCourseByCourseId(String courseId) {
+        try{
+            PreparedStatement preparedStatement = connection.prepareStatement("""
+                select *
+                from course 
+                where course_id = ?
+        """);
+            preparedStatement.setString(1, courseId);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if(resultSet.next()){
+                Course course = new Course();
+                course.setDegreeProgramCode(resultSet.getString("degree_program_code"));
+                course.setName(resultSet.getString("name"));
+                course.setProfessorId(resultSet.getString("professor_id"));
+                course.setCode(courseId);
+                course.setCredits(resultSet.getFloat("credits"));
+                return course;
+            }
+            throw new RuntimeException("doesn't exist a course with this id:"+courseId);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

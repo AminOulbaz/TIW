@@ -1,12 +1,8 @@
 package service;
 
 import dao.*;
-import model.Course;
-import model.ExamEnrollment;
-import model.ExamResult;
-import model.ExamSession;
+import model.*;
 
-import java.sql.SQLException;
 import java.util.List;
 
 public class ProfessorService {
@@ -16,19 +12,24 @@ public class ProfessorService {
     private ExamSessionDao examSessionDao;
     private ExamEnrollmentStudentDao examEnrollmentStudentDao;
     private ExamResultDao examResultDao;
+    private VerbalDao verbalDao;
 
     public ProfessorService(ProfessorDao professorDao,
                             CourseDao courseDao,
                             ExamSessionDao examSessionDao,
                             ExamEnrollmentStudentDao examEnrollmentStudentDao,
-                            ExamResultDao examResultDao) {
+                            ExamResultDao examResultDao,
+                            VerbalDao verbalDao) {
         this.professorDao = professorDao;
         this.courseDao = courseDao;
         this.examSessionDao = examSessionDao;
         this.examEnrollmentStudentDao = examEnrollmentStudentDao;
         this.examResultDao = examResultDao;
+        this.verbalDao = verbalDao;
     }
-
+    public Professor getProfessorByUsername(String professorUsername) {
+        return professorDao.getProfessorByUserId(professorUsername);
+    }
     public List<Course> getCoursesByProfessor(String professorId){
         return courseDao.getCoursesByProfessorId(professorId);
     }
@@ -41,14 +42,16 @@ public class ProfessorService {
     public ExamResult getExamResultByExamSessionIdAndStudentId(int examSessionId,String studentId){
         return examResultDao.getExamResultByExamSessionIdAndStudentId(examSessionId,studentId);
     }
+    public List<ExamResult> getExamResultsByExamSessionId(int examSessionId){
+        return examResultDao.getExamResultsByExamSessionId(examSessionId);
+    }
     public void updateExamResult(ExamResult examResult){
         examResultDao.updateExamResult(examResult);
-//        try {
-//            examResultDao.updateExamResult(examResult);
-//        } catch (SQLException e) {
-//            throw new ExamUpdateFailedException("Database error while updating result", e);
-//        } catch (InvalidGradeException | StudentNotEnrolledException e) {
-//            throw e; // errori di dominio che il controller deve gestire
-//        }
+    }
+    public void createVerbal(Verbal verbal){
+        verbalDao.createVerbal(verbal);
+    }
+    public Verbal getVerbalById(int verbalId){
+        return verbalDao.getVerbal(verbalId);
     }
 }

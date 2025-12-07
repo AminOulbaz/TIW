@@ -8,10 +8,6 @@ public class ExamEnrollment {
     private Date enrollmentDate;
 
     public ExamEnrollment(){}
-    public ExamEnrollment(int examSessionId, String studentId) {
-        this.examSessionId = examSessionId;
-        this.studentId = studentId;
-    }
 
     public int getExamSessionId() {
         return examSessionId;

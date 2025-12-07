@@ -29,10 +29,6 @@ public class ExamEnrollmentStudentDaoImpl implements ExamEnrollmentStudentDao {
             from exam_enrollment 
             where exam_session_id = ?
 """);
-            /*TODO
-matricola, cognome e nome, email, corso di laurea, voto e stato
-di valutazione
-             */
             psmt.setInt(1, examSessionId);
             ResultSet rs = psmt.executeQuery();
             List<ExamEnrollment> examEnrollments = new ArrayList<ExamEnrollment>();

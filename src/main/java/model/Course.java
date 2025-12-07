@@ -4,14 +4,15 @@ public class Course {
     private String code;
     private String name;
     private float credits;
-    private int degreeProgramId;
+    private String degreeProgramCode;
+    private String professorId;
 
     public Course() {}
-    public Course(String code, String name, float credits, int degreeProgramId) {
+    public Course(String code, String name, float credits, String degreeProgramId) {
         this.code = code;
         this.name = name;
         this.credits = credits;
-        this.degreeProgramId = degreeProgramId;
+        this.degreeProgramCode = degreeProgramCode;
     }
 
     public String getCode() {
@@ -26,8 +27,20 @@ public class Course {
         return credits;
     }
 
-    public int getDegreeProgramId() {
-        return degreeProgramId;
+    public String getDegreeProgramId() {
+        return degreeProgramCode;
+    }
+
+    public String getDegreeProgramCode() {
+        return degreeProgramCode;
+    }
+
+    public String getProfessorId() {
+        return professorId;
+    }
+
+    public void setProfessorId(String professorId) {
+        this.professorId = professorId;
     }
 
     public void setCode(String code) {
@@ -42,7 +55,18 @@ public class Course {
         this.credits = credits;
     }
 
-    public void setDegreeProgramId(int degreeProgramId) {
-        this.degreeProgramId = degreeProgramId;
+    public void setDegreeProgramCode(String degreeProgramCode) {
+        this.degreeProgramCode = degreeProgramCode;
+    }
+
+    @Override
+    public String toString() {
+        return "Course{" +
+               "code='" + code + '\'' +
+               ", name='" + name + '\'' +
+               ", credits=" + credits +
+               ", degreeProgramCode='" + degreeProgramCode + '\'' +
+               ", professorId='" + professorId + '\'' +
+               '}';
     }
 }

@@ -1,5 +1,6 @@
 package controller;
 
+import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
@@ -12,6 +13,11 @@ import java.io.IOException;
 public class LoginController extends HttpServlet {
 
     private AuthService authService;
+
+    @Override
+    public void init() throws ServletException {
+        super.init();
+    }
 
     public LoginController(AuthService authService) {
         this.authService = authService;

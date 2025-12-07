@@ -51,6 +51,14 @@ public class AuthServiceIT {
     }
 
     @Test
+    void user_interaction(){
+        auth.register("yo","ie","oi@oi.io","STUDENT");
+        assertTrue(auth.login("yo","ie"));
+        auth.updatePassword("yo","passwordseria");
+        assertTrue(auth.login("yo","passwordseria"));
+    }
+
+    @Test
     void loginStudente_ok() {
         assertTrue(auth.login("studente@test.com", "1234"));
     }

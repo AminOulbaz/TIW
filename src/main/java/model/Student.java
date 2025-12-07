@@ -5,7 +5,8 @@ public class Student {
     private String name;
     private String surname;
     private String email;
-    private int degreeProgramId;
+    private int yearOfStudy;
+    private String degreeProgramCode;
 
     public Student() {}
 
@@ -25,8 +26,16 @@ public class Student {
         return email;
     }
 
-    public int getDegreeProgramId() {
-        return degreeProgramId;
+    public String getDegreeProgramCode() {
+        return degreeProgramCode;
+    }
+
+    public int getYearOfStudy() {
+        return yearOfStudy;
+    }
+
+    public void setYearOfStudy(int yearOfStudy) {
+        this.yearOfStudy = yearOfStudy;
     }
 
     public void setId(String id) {
@@ -45,7 +54,19 @@ public class Student {
         this.email = email;
     }
 
-    public void setDegreeProgramId(int degreeProgramId) {
-        this.degreeProgramId = degreeProgramId;
+    public void setDegreeProgramCode(String degreeProgramCode) {
+        this.degreeProgramCode = degreeProgramCode;
+    }
+
+    @Override
+    public String toString() {
+        return "Student{" +
+               "id='" + id + '\'' +
+               ", name='" + name + '\'' +
+               ", surname='" + surname + '\'' +
+               ", email='" + email + '\'' +
+               ", yearOfStudy=" + yearOfStudy +
+               ", degreeProgramCode='" + degreeProgramCode + '\'' +
+               '}';
     }
 }
