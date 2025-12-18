@@ -21,7 +21,6 @@ public class ProfessorServiceIT {
     private static ProfessorDao professorDao;
     private static CourseDao courseDao;
     private static ExamSessionDao examSessionDao;
-    private static ExamEnrollmentStudentDao examEnrollmentStudentDao;
     private static ExamResultDao examResultDao;
     private static VerbalDao verbalDao;
     private static ProfessorService professorService;
@@ -35,14 +34,12 @@ public class ProfessorServiceIT {
         professorDao = new ProfessorDaoImpl(connection);
         courseDao = new CourseDaoImpl(connection);
         examSessionDao = new ExamSessionDaoImpl(connection);
-        examEnrollmentStudentDao = new ExamEnrollmentStudentDaoImpl(connection);
         examResultDao = new ExamResultDaoImpl(connection);
         verbalDao = new VerbalDaoImpl(connection);
         professorService = new ProfessorService(
                 professorDao,
                 courseDao,
                 examSessionDao,
-                examEnrollmentStudentDao,
                 examResultDao,
                 verbalDao
         );
@@ -59,6 +56,12 @@ public class ProfessorServiceIT {
         assertEquals("Doe",professor.getSurname());
         assertEquals("john.doe@university.com",professor.getEmail());
         assertEquals("Department of Computer Science",professor.getDepartment());
+
+
+        assertTrue(professorService.getExamResultWithStudentsByExamSessionId(1)
+                .stream().anyMatch(e -> e.getExamResult().getStatus().equals(ExamStatus.INSERTED)));
+
+
     }
     @Test
     void docente_puo_visualizzare_i_suoi_corsi() {
@@ -88,21 +91,11 @@ public class ProfessorServiceIT {
         examResult.setStatus(status);
         professorService.updateExamResult(examResult);
     }
-    ExamEnrollment iscritto_ad_un_appello_del_corso(String course_code){
-        ExamSession examSession = professorService.getExamSessionsByCourse("CS101").stream().
-                findAny().orElse(null);
-        assertNotNull(examSession);
-        return professorService.getEnrolledStudentByExamSession(examSession.getId()).stream().
-                findAny().orElse(null);
-    }
     @Test
     void docente_puo_modificare_esito_e_stato_di_valutazione_ad_un_iscritto(){
-        ExamEnrollment examEnrollment = iscritto_ad_un_appello_del_corso("CS101");
-        assertNotNull(examEnrollment);
-
-        ExamResult examResult = professorService.getExamResultByExamSessionIdAndStudentId(
-                examEnrollment.getExamSessionId(),examEnrollment.getStudentId()
-        );
+        ExamResult examResult = professorService.getExamResultsByExamSessionId(1).stream().filter(
+                e -> e.getStatus().equals(ExamStatus.NOTINSERTED))
+                .findFirst().orElse(null);
 
         docente_modifica_un_voto_ad_uno_studente(
                 examResult.getExamId(),
@@ -111,7 +104,8 @@ public class ProfessorServiceIT {
                 ExamStatus.INSERTED
         );
 
-        ExamResult examResult1 = professorService.getExamResultsByExamSessionId(examEnrollment.getExamSessionId()).stream().
+        ExamResult examResult1 =
+                professorService.getExamResultsByExamSessionId(examResult.getExamId()).stream().
             filter(e -> e.getGrade().equals(ExamGrade.GRADE_18) && e.getStatus().equals(ExamStatus.INSERTED)).findFirst().orElse(null);
 
 
@@ -168,13 +162,26 @@ public class ProfessorServiceIT {
         }
         assertTrue(gradesVerbalized);
         Verbal verbal = new Verbal();
-        verbal.setExamSessionId(2);
         verbal.setCreationTimestamp(
                 Timestamp.valueOf(LocalDateTime.now())
         );
         verbal.setProfessorId("prof01");
+        verbal.setExamSession(
+                professorService.getExamSessionByExamSessionId(2)
+        );
+        verbal.setExamVerbalId(
+                Verbal.generateCode(
+                        verbal.getExamSession().getId(),
+                        verbal.getProfessorId(),
+                        verbal.getCreationTimestamp()
+                )
+        );
         professorService.createVerbal(verbal);
-        Verbal verbalInserted = professorService.getVerbalById(1);
+        System.out.println(verbal);
+        Verbal verbalInserted = professorService.getVerbalById(
+                verbal.getExamVerbalId()
+        );
+        System.out.println(verbalInserted);
         assertEquals(
                 verbal.getProfessorId(), verbalInserted.getProfessorId()
         );assertEquals(

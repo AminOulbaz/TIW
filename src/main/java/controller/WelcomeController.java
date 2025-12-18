@@ -8,11 +8,13 @@ import jakarta.servlet.http.HttpServletResponse;
 
 import java.io.IOException;
 
-@WebServlet("/")
+@WebServlet("/welcome")
 public class WelcomeController extends HttpServlet {
+
+    WelcomeController(){}
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-
+        resp.sendRedirect(req.getContextPath() + "/login");
     }
 }

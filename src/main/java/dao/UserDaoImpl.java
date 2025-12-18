@@ -37,7 +37,7 @@ public class UserDaoImpl implements UserDao{
                 user.setRole(
                         rs.getString("role").equals("STUDENT") ?
                                 new StudentRole() :
-                                rs.getString("role").equals("TEACHER") ?
+                                rs.getString("role").equals("PROFESSOR") ?
                                         new ProfessorRole() : null
                 );
                 return user;

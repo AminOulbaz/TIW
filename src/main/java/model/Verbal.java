@@ -5,35 +5,42 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Verbal {
-    private int examVerbalId;
+    private String examVerbalId;
+    private ExamSession examSession;
     private String professorId;
-    private int examSessionId;
-    private List<Student> students;
+    private List<ExamResultWithStudent> examResultWithStudents;
     private Timestamp creationTimestamp;
 
     public Verbal() {}
 
-    public int getExamVerbalId() {
+    public ExamSession getExamSession() {
+        return examSession;
+    }
+
+    public void setExamSession(ExamSession examSession) {
+        this.examSession = examSession;
+    }
+
+    public List<ExamResultWithStudent> getExamResultWithStudents() {
+        return examResultWithStudents;
+    }
+
+    public void setExamResultWithStudents(List<ExamResultWithStudent> examResultWithStudents) {
+        this.examResultWithStudents = examResultWithStudents;
+    }
+
+    public String getExamVerbalId() {
         return examVerbalId;
     }
 
     public String getProfessorId() {
         return professorId;
     }
-
-    public int getExamSessionId() {
-        return examSessionId;
-    }
-
     public Timestamp getCreationTimestamp() {
         return creationTimestamp;
     }
 
-    public List<Student> getStudents() {
-        return new ArrayList<>(students);
-    }
-
-    public void setExamVerbalId(int examVerbalId) {
+    public void setExamVerbalId(String examVerbalId) {
         this.examVerbalId = examVerbalId;
     }
 
@@ -41,24 +48,24 @@ public class Verbal {
         this.professorId = professorId;
     }
 
-    public void setExamSessionId(int examSessionId) {
-        this.examSessionId = examSessionId;
-    }
-
-    public void setStudents(List<Student> students) {
-        this.students = students;
-    }
-
     public void setCreationTimestamp(Timestamp creationTimestamp) {
         this.creationTimestamp = creationTimestamp;
+    }
+
+    public static String generateCode(
+            int examSessionId, String professorId, Timestamp creationTimestamp
+    ){
+        return Integer.toHexString(
+                professorId.hashCode() + examSessionId + creationTimestamp.hashCode());
     }
 
     @Override
     public String toString() {
         return "Verbal{" +
-                "examVerbalId=" + examVerbalId +
-                ", examSessionId=" + examSessionId +
-                ", students=" + students +
+                "examVerbalId='" + examVerbalId + '\'' +
+                ", examSession=" + examSession +
+                ", professorId='" + professorId + '\'' +
+                ", examResultWithStudents=" + examResultWithStudents +
                 ", creationTimestamp=" + creationTimestamp +
                 '}';
     }

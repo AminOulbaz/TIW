@@ -59,7 +59,7 @@ public class StudentServiceIT {
         assertNotNull(student);
         List<Course> courses = studentService.getCoursesByDegreeCode(student.getDegreeProgramCode());
         for(Course c : courses){
-            Course tmpCourse = courseDao.getCourseByCourseId(c.getCode());
+            Course tmpCourse = courseDao.getCourseByCourseCode(c.getCode());
             assertEquals(tmpCourse.getDegreeProgramCode(),c.getDegreeProgramCode());
             assertEquals(tmpCourse.getProfessorId(),c.getProfessorId());
             assertEquals(tmpCourse.getName(),c.getName());
@@ -90,5 +90,9 @@ public class StudentServiceIT {
         assertTrue(studentService.getExamResultByExamSessionAndStudentId(5,"stud01")
                 .getStatus().equals(ExamStatus.REFUSED)
         );
+    }
+
+    @Test
+    void studente_si_ritira_dal_uni(){
     }
 }

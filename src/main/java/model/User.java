@@ -57,5 +57,15 @@ public class User {
         this.role = role;
     }
     public String getHomePage() { return role.homePage();}
+
+    @Override
+    public String toString() {
+        return "User{" +
+               "username='" + username + '\'' +
+               ", password='" + password + '\'' +
+               ", email='" + email + '\'' +
+               ", role=" + role +
+               '}';
+    }
 }
 

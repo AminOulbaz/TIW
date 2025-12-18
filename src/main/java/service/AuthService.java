@@ -16,13 +16,14 @@ public class AuthService {
         encoder = new BCryptPasswordEncoder();
     }
 
-    private User getUser(String username){
+    public User getUser(String username){
         return dao.findByUsername(username);
     }
 
     public void register(String username, String password,
                          String email, String role){
         String hashed = encoder.encode(password);
+        System.out.println(hashed);
         dao.registerUser(username, hashed, email, role);
     }
 

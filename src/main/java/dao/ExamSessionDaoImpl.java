@@ -1,6 +1,7 @@
 package dao;
 
 import model.ExamSession;
+import model.Student;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -39,6 +40,31 @@ public class ExamSessionDaoImpl implements ExamSessionDao {
                 examSessions.add(examSession);
             }
             return examSessions;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @Override
+    public ExamSession getExamSessionById(int examSessionId) {
+        try {
+            PreparedStatement psmt = connection.prepareStatement("""
+        select course_id, session_date, room, type
+        from exam_session
+        where exam_session_id = ?
+""");
+            psmt.setInt(1, examSessionId);
+            ResultSet rs = psmt.executeQuery();
+            ExamSession examSession = null;
+            if(rs.next()){
+                examSession = new ExamSession();
+                examSession.setId(examSessionId);
+                examSession.setDate(rs.getDate("session_date"));
+                examSession.setRoom(rs.getString("room"));
+                examSession.setType(rs.getString("type"));
+                examSession.setCourseCode(rs.getString("course_id"));
+            }
+            return examSession;
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

@@ -1,6 +1,7 @@
 package service;
 
 import dao.*;
+import exception.validation.ExamResultNoExistsException;
 import exception.validation.StudentFailAuthenticationException;
 import model.*;
 
@@ -10,7 +11,6 @@ public class StudentService {
     private StudentDao studentDao;
     private CourseDao courseDao;
     private ExamSessionDao examSessionDao;
-    private ExamEnrollmentStudentDao examEnrollmentStudentDao;
     private ExamResultDao examResultDao;
 
     public StudentService(StudentDao studentDao, CourseDao courseDao, ExamSessionDao examSessionDao, ExamResultDao examResultDao) {
@@ -46,6 +46,20 @@ public class StudentService {
     public void refuseExamResult(ExamResult examResult){
         examResultDao.updateExamResult(examResult.getExamResultWithDifferentStatus(ExamStatus.REFUSED));
     }
+    public List<ExamResult> getExamResultsByStudentId(String studentId){
+        return examResultDao.getExamResultsByStudentId(studentId);
+    }
+    public List<ExamResult> getEnrollmentsByStudentId(String studentId){
+        return getExamResultsByStudentId(studentId).stream().filter(
+                e -> e.getStatus().equals(ExamStatus.NOTINSERTED)
+        ).toList();
+    }
+    public ExamSession getExamSessionByExamSessionId(int examSessionId){
+        return examSessionDao.getExamSessionById(examSessionId);
+    }
+    public Course getCourseByCourseCode(String courseCode){
+        return courseDao.getCourseByCourseCode(courseCode);
+    }
 
     /*
     Support method to simplify the control:
@@ -53,5 +67,20 @@ public class StudentService {
     public List<Student> getStudents(){
         return studentDao.getStudents();
     }
-    public boolean registerStudentToAppeal(int studentId, int appealId){return false;}
+    public void subscribeStudentToExamSession(String studentId, int examSessionId){
+        try{
+            getExamResultByExamSessionAndStudentId(examSessionId, studentId);
+        } catch (ExamResultNoExistsException e) {
+            ExamResult examResult = new ExamResult();
+            examResult.setStudentId(studentId);
+            examResult.setStatus(ExamStatus.NOTINSERTED);
+            examResult.setExamId(examSessionId);
+            examResult.setGrade(ExamGrade.EMPTY);
+            examResultDao.insertExamResult(examResult);
+        }
+    }
+    public void unsubscribeStudentToExamSession(String studentId, int examSessionId){
+        if(getExamResultByExamSessionAndStudentId(examSessionId, studentId) != null)
+            examResultDao.deleteExamResult(examSessionId, studentId);
+    }
 }

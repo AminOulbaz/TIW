@@ -22,7 +22,7 @@ public class ExamSession {
         this.type = type;
     }
 
-    public String getCourse() {
+    public String getCourseCode() {
         return courseCode;
     }
 

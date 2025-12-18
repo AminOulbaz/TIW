@@ -75,25 +75,25 @@ public class CourseDaoImpl implements CourseDao {
     }
 
     @Override
-    public Course getCourseByCourseId(String courseId) {
+    public Course getCourseByCourseCode(String courseCode) {
         try{
             PreparedStatement preparedStatement = connection.prepareStatement("""
                 select *
                 from course 
                 where course_id = ?
         """);
-            preparedStatement.setString(1, courseId);
+            preparedStatement.setString(1, courseCode);
             ResultSet resultSet = preparedStatement.executeQuery();
             if(resultSet.next()){
                 Course course = new Course();
                 course.setDegreeProgramCode(resultSet.getString("degree_program_code"));
                 course.setName(resultSet.getString("name"));
                 course.setProfessorId(resultSet.getString("professor_id"));
-                course.setCode(courseId);
+                course.setCode(courseCode);
                 course.setCredits(resultSet.getFloat("credits"));
                 return course;
             }
-            throw new RuntimeException("doesn't exist a course with this id:"+courseId);
+            throw new RuntimeException("doesn't exist a course with this id:"+courseCode);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

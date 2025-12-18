@@ -72,7 +72,7 @@ public class TestInitialization {
                 FOREIGN KEY (student_id) REFERENCES student(student_id)
             );
             CREATE TABLE exam_verbal(
-                exam_verbal_id INT AUTO_INCREMENT,
+                exam_verbal_id VARCHAR(255),
                 exam_session_id INT NOT NULL,
                 creation_timestamp DATETIME NOT NULL,
                 professor_id VARCHAR(16) NOT NULL,
@@ -145,7 +145,7 @@ public class TestInitialization {
               INSERT INTO exam_result(exam_session_id, student_id, grade, status) VALUES
               (1, 'stud01', '<vuoto>', 'non inserito'),
               (1, 'stud02', '<vuoto>', 'non inserito'),
-              (1, 'stud03', '<vuoto>', 'non inserito'),
+              (1, 'stud03', '18', 'inserito'),
               (2, 'stud01', '<vuoto>', 'non inserito'),
               (2, 'stud02', '<vuoto>', 'non inserito'),
               (2, 'stud03', '<vuoto>', 'non inserito'),

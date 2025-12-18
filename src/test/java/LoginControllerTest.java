@@ -19,7 +19,8 @@ class LoginControllerTest {
     @BeforeEach
     void setup() {
         authService = mock(AuthService.class);
-        controller = new LoginController(authService);
+        controller = new LoginController();
+        controller.setAuthService(authService);
         request = new MockHttpServletRequest();
         response = new MockHttpServletResponse();
     }

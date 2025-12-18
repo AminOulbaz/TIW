@@ -7,5 +7,5 @@ import java.util.List;
 public interface CourseDao {
     List<Course> getCoursesByProfessorId(String professorId);
     List<Course> getCourseByDegreeCode(String degreeCode);
-    Course getCourseByCourseId(String courseId);
+    Course getCourseByCourseCode(String courseId);
 }

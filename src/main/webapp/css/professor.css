@@ -1,0 +1,237 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    background: #f7f7f7;
+}
+
+/* HEADER */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 25px;
+    background: #2c3e50;
+    color: white;
+}
+
+.logout a {
+    color: white;
+    text-decoration: none;
+    background: #e74c3c;
+    padding: 8px 12px;
+    border-radius: 4px;
+}
+
+.logout a:hover {
+    background: #c0392b;
+}
+
+.home a {
+    color: white;
+    text-decoration: none;
+    background: #1b66ca;
+    padding: 8px 12px;
+    border-radius: 4px;
+}
+
+.home a:hover {
+    background: #4a90e2;
+}
+
+/* MAIN LAYOUT */
+.container {
+    display: flex;
+    justify-content: center;
+    padding: 40px;
+}
+
+.card {
+    background: white;
+    width: 95%;
+    padding: 25px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+.card h2 {
+    margin-top: 0;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #ddd;
+    padding-bottom: 10px;
+}
+
+.info {
+    margin-bottom: 15px;
+    color: #444;
+}
+
+label {
+    display: block;
+    margin-top: 15px;
+    font-weight: bold;
+}
+
+select {
+    width: 100%;
+    padding: 8px;
+    margin-top: 5px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+}
+/* Pulsanti azione */
+.actions {
+    margin: 15px 0;
+    display: flex;
+    gap: 10px;
+}
+
+.btn-action {
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 15px;
+}
+
+.btn-publish {
+    background-color: #34a853;
+    color: white;
+}
+
+.btn-publish:hover {
+    background-color: #27863f;
+}
+
+.btn-verbalizza {
+    background-color: #fbbc04;
+    color: #333;
+}
+
+.btn-verbalizza:hover {
+    background-color: #d9a300;
+}
+
+button {
+    padding: 8px 14px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.btn-save {
+    background: #3498db;
+    color: white;
+}
+
+.btn-save:hover {
+    background: #2980b9;
+}
+
+.btn-cancel {
+    background: #bdc3c7;
+    color: #2c3e50;
+}
+
+.btn-cancel:hover {
+    background: #95a5a6;
+}
+
+.btn-back {
+    margin-top: 20px;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    background-color: #bdc3c7;
+    color: #2c3e50;
+    cursor: pointer;
+}
+
+.btn-back:hover {
+    background-color: #95a5a6;
+}
+
+.section {
+    flex: 1;
+    background: white;
+    padding: 15px;
+    border-radius: 6px;
+    box-shadow: 0 0 5px rgba(0,0,0,0.1);
+}
+
+.section h2 {
+    margin-top: 0;
+}
+
+/* COURSE BOX */
+.course-box {
+    margin: 10px 0;
+    padding: 10px;
+    background: #f0f0f0;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+.session-list {
+    margin-left: 20px;
+    display: none;
+}
+
+.session-item {
+    margin: 5px 0;
+    padding: 6px;
+    background: #ffffff;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.session-item:hover {
+    background: #e0e0ff;
+}
+
+
+/* Tabella iscritti */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 15px;
+}
+
+thead {
+    background: #eaeaea;
+}
+
+th, td {
+    padding: 10px;
+    border: 1px solid #cccccc;
+    text-align: left;
+}
+
+tr:hover {
+    background-color: #f2f2ff;
+}
+
+/* Bottone modifica riga */
+.btn-modifica {
+    padding: 6px 12px;
+    border: none;
+    background-color: #4285f4;
+    color: white;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.btn-modifica:hover {
+    background-color: #1b66ca;
+}
+
+.btn-modifica-disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+a.order-link {
+    text-decoration: none;
+    color: black;
+    font-weight: bold;
+}

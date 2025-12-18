@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import dao.UserDao;
 import dao.UserDaoImpl;
+import model.User;
 import service.AuthService;
 
 import org.junit.jupiter.api.*;
@@ -52,8 +53,8 @@ public class AuthServiceIT {
 
     @Test
     void user_interaction(){
-        auth.register("yo","ie","oi@oi.io","STUDENT");
-        assertTrue(auth.login("yo","ie"));
+        auth.register("yo","1111","oi@oi.io","STUDENT");
+        assertTrue(auth.login("yo","1111"));
         auth.updatePassword("yo","passwordseria");
         assertTrue(auth.login("yo","passwordseria"));
     }
