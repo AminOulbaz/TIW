@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="it">
+<head>
+    <meta charset="UTF-8">
+    <title>Enrolled</title>
+</head>
+<body>
+    <table>
+        <thead>
+            <tr>
+                <th>Matricola</th>
+                <th>Cognome</th>
+                <th>Nome</th>
+                <th>Email</th>
+                <th>Corso di Laurea</th>
+                <th>Voto</th>
+                <th>Stato di valutazione</th>
+                <th>Modifica</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr th:each="iscritto : ${iscritti}">
+                <td th:text="${iscritto.student.identifier}"></td>
+                <td th:text="${iscritto.student.surname}"></td>
+                <td th:text="${iscritto.student.name}"></td>
+                <td th:text="${iscritto.student.email}"></td>
+                <td th:text="${iscritto.student.degree.name}"></td>
+                <td th:text="${iscritto.vote}"></td>
+                <td th:text="${iscritto.status}"></td>
+                <td>
+                    <a th:href="@{/modifyVote(studente=${iscritto})}">
+                        <button>Modifica</button>
+                    </a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</body>
+</html>

@@ -1,0 +1,146 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    background: #f7f7f7;
+}
+
+/* HEADER */
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 25px;
+    background: #2c3e50;
+    color: white;
+}
+
+.logout a {
+    color: white;
+    text-decoration: none;
+    background: #e74c3c;
+    padding: 8px 12px;
+    border-radius: 4px;
+}
+
+.logout a:hover {
+    background: #c0392b;
+}
+
+.home a {
+    color: white;
+    text-decoration: none;
+    background: #1b66ca;
+    padding: 8px 12px;
+    border-radius: 4px;
+}
+
+.home a:hover {
+    background: #4a90e2;
+}
+
+/* MAIN LAYOUT */
+.container {
+    display: flex;
+    justify-content: center;
+    padding: 40px;
+}
+
+.section {
+    flex: 1;
+    background: white;
+    padding: 15px;
+    border-radius: 6px;
+    box-shadow: 0 0 5px rgba(0,0,0,0.1);
+}
+
+.section h2 {
+    margin-top: 0;
+}
+
+.course-box {
+    border: 1px solid #ccc;
+    margin-bottom: 12px;
+    padding: 12px;
+    border-radius: 6px;
+    cursor: pointer;
+    background: #f7f7f7;
+}
+
+.course-box:hover {
+    background: #eaeaea;
+}
+
+.exam-list {
+    display: none;
+    margin-top: 10px;
+    margin-left: 20px;
+    padding: 10px;
+    border-left: 3px solid #666;
+}
+
+.exam-entry {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    padding: 10px 15px;
+    margin-bottom: 8px;
+
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    background-color: #fafafa;
+}
+
+.exam-info {
+    flex: 1;
+    font-size: 14px;
+}
+
+.exam-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.exam-actions form {
+    margin: 0;
+}
+
+.btn {
+    padding: 6px 12px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.btn-subscribe {
+    background-color: #34a853;
+    color: white;
+}
+
+.btn-subscribe:hover {
+    background-color: #2e8b46;
+}
+
+.btn-esito {
+    background-color: #4285f4;
+    color: white;
+}
+
+.btn-esito:hover {
+    background-color: #1b66ca;
+}
+
+.btn-refuse {
+    background-color: #d9534f;
+    color: white;
+}
+.box {
+    border: 1px solid #ccc;
+    padding: 15px;
+    border-radius: 6px;
+}
+.danger {
+    color: #b52b27;
+    font-weight: bold;
+}
+
