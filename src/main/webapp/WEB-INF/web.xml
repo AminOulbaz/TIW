@@ -25,12 +25,13 @@
     </context-param>
     <!-- END ServletContext parameters for application configuration-->
     <!-- BEGIN Servlet definition -->
-    <!--<welcome-file-list>
-        <welcome-file>index.jsp</welcome-file>
+    <welcome-file-list>
+        <welcome-file>login.html</welcome-file>
     </welcome-file-list>
+    <!--
     <servlet>
         <servlet-name>login</servlet-name>
-        <servlet-class>controller.LoginController</servlet-class>
+        <servlet-class>web.LoginController</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>login</servlet-name>
@@ -38,7 +39,7 @@
     </servlet-mapping>
     <servlet>
         <servlet-name>home</servlet-name>
-        <servlet-class>controller.HomeController</servlet-class>
+        <servlet-class>web.HomeController</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>home</servlet-name>
@@ -46,7 +47,7 @@
     </servlet-mapping>
     <servlet>
         <servlet-name>enrolled</servlet-name>
-        <servlet-class>controller.EnrolledController</servlet-class>
+        <servlet-class>web.EnrolledController</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>enrolled</servlet-name>

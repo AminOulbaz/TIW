@@ -14,6 +14,10 @@ body {
     color: white;
 }
 
+.logout{
+    cursor: pointer;
+}
+
 .logout a {
     color: white;
     text-decoration: none;
@@ -197,6 +201,10 @@ table {
     margin-top: 15px;
 }
 
+table:hover{
+    background: rgba(224, 224, 255, 0.22);
+}
+
 thead {
     background: #eaeaea;
 }
@@ -235,3 +243,64 @@ a.order-link {
     color: black;
     font-weight: bold;
 }
+
+.enrolled-container {
+    position: relative;
+}
+.enrolled-container:hover{
+
+}
+
+/*Modal to modify the vote*/
+.modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background: white;
+    padding: 20px;
+    border-radius: 6px;
+    min-width: 300px;
+}
+.table-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+
+    background: rgba(0,0,0,0.45);
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    z-index: 1000;
+}
+
+
+.table-modal {
+    background: white;
+    padding: 20px;
+    border-radius: 6px;
+    min-width: 280px;
+    z-index: 11;
+}
+
+.modal-actions {
+    margin-top: 15px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.disabled {
+    pointer-events: none;
+    opacity: 0.5;
+}
+

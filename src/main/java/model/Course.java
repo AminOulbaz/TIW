@@ -1,14 +1,17 @@
 package model;
 
+import java.util.List;
+
 public class Course {
     private String code;
     private String name;
     private float credits;
     private String degreeProgramCode;
     private String professorId;
+    private List<ExamSession> examSessions;
 
     public Course() {}
-    public Course(String code, String name, float credits, String degreeProgramId) {
+    public Course(String code, String name, float credits, String degreeProgramCode) {
         this.code = code;
         this.name = name;
         this.credits = credits;
@@ -68,5 +71,13 @@ public class Course {
                ", degreeProgramCode='" + degreeProgramCode + '\'' +
                ", professorId='" + professorId + '\'' +
                '}';
+    }
+
+    public List<ExamSession> getExamSessions() {
+        return examSessions;
+    }
+
+    public void setExamSessions(List<ExamSession> examSessions) {
+        this.examSessions = examSessions;
     }
 }

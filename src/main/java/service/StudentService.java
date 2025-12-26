@@ -60,6 +60,11 @@ public class StudentService {
     public Course getCourseByCourseCode(String courseCode){
         return courseDao.getCourseByCourseCode(courseCode);
     }
+    public boolean isSubscribed(String studentId, int examSessionId){
+        return examResultDao.getExamResultByExamSessionIdAndStudentId(
+                examSessionId, studentId
+        ) != null;
+    }
 
     /*
     Support method to simplify the control:

@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Home Docente</title>
+    <link rel="stylesheet" href="/css/professor.css">
+</head>
+
+<body>
+
+<!-- HEADER -->
+<div class="header">
+    <h1 id="welcome"></h1>
+    <div class="logout">
+        <a onclick="logout()">Logout</a>
+    </div>
+</div>
+
+<!-- CORSI CONTENT -->
+<div class="container">
+    <div class="section">
+        <h2>Gestione Corsi</h2>
+        <div id="coursesContainer"></div>
+    </div>
+</div>
+
+<!-- VERBALI CONTENT -->
+<div class="container">
+    <div class="section">
+        <h2>Gestione Verbali</h2>
+        <div class="course-box"
+             onclick="window.location.href='/html/verbals.html'">
+            Verbali
+        </div>
+    </div>
+</div>
+
+<script src="/js/professor.js"></script>
+</body>
+</html>
