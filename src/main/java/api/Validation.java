@@ -10,6 +10,6 @@ public class Validation {
     }
     public static boolean validateUser(HttpServletRequest request) {
         HttpSession session = request.getSession(false);
-
+        return false;
     }
 }
