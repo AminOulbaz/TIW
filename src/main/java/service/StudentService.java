@@ -60,7 +60,6 @@ public class StudentService {
     public Course getCourseByCourseCode(String courseCode){
         return courseDao.getCourseByCourseCode(courseCode);
     }
-
     /*
     Support method to simplify the control:
      */
@@ -82,5 +81,14 @@ public class StudentService {
     public void unsubscribeStudentToExamSession(String studentId, int examSessionId){
         if(getExamResultByExamSessionAndStudentId(examSessionId, studentId) != null)
             examResultDao.deleteExamResult(examSessionId, studentId);
+    }
+    public boolean isSubscribed(String studentId, int examSessionId){
+        try{
+            examResultDao.getExamResultByExamSessionIdAndStudentId(
+                    examSessionId, studentId);
+            return true;
+        }catch (ExamResultNoExistsException e){
+            return false;
+        }
     }
 }

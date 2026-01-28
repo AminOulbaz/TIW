@@ -1,3 +1,7 @@
+* {
+    box-sizing: border-box;
+}
+
 body {
     font-family: Arial, sans-serif;
     margin: 0;
@@ -14,12 +18,20 @@ body {
     color: white;
 }
 
-.logout a {
+.logout {
+    cursor: pointer;
+}
+
+.logout a,
+.home a {
     color: white;
     text-decoration: none;
-    background: #e74c3c;
     padding: 8px 12px;
     border-radius: 4px;
+}
+
+.logout a {
+    background: #e74c3c;
 }
 
 .logout a:hover {
@@ -27,11 +39,7 @@ body {
 }
 
 .home a {
-    color: white;
-    text-decoration: none;
     background: #1b66ca;
-    padding: 8px 12px;
-    border-radius: 4px;
 }
 
 .home a:hover {
@@ -47,19 +55,20 @@ body {
 
 .card {
     background: white;
-    width: 95%;
+    width: 100%;
+    max-width: 1200px;
     padding: 25px;
     border-radius: 8px;
     box-shadow: 0 0 10px rgba(0,0,0,0.1);
 }
 
 .card h2 {
-    margin-top: 0;
-    margin-bottom: 20px;
+    margin: 0 0 20px 0;
     border-bottom: 1px solid #ddd;
     padding-bottom: 10px;
 }
 
+/* INFO */
 .info {
     margin-bottom: 15px;
     color: #444;
@@ -78,91 +87,15 @@ select {
     border-radius: 4px;
     border: 1px solid #ccc;
 }
-/* Pulsanti azione */
+
+/* AZIONI */
 .actions {
     margin: 15px 0;
     display: flex;
     gap: 10px;
 }
 
-.btn-action {
-    padding: 8px 16px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 15px;
-}
-
-.btn-publish {
-    background-color: #34a853;
-    color: white;
-}
-
-.btn-publish:hover {
-    background-color: #27863f;
-}
-
-.btn-verbalizza {
-    background-color: #fbbc04;
-    color: #333;
-}
-
-.btn-verbalizza:hover {
-    background-color: #d9a300;
-}
-
-button {
-    padding: 8px 14px;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-}
-
-.btn-save {
-    background: #3498db;
-    color: white;
-}
-
-.btn-save:hover {
-    background: #2980b9;
-}
-
-.btn-cancel {
-    background: #bdc3c7;
-    color: #2c3e50;
-}
-
-.btn-cancel:hover {
-    background: #95a5a6;
-}
-
-.btn-back {
-    margin-top: 20px;
-    padding: 8px 16px;
-    border: none;
-    border-radius: 4px;
-    background-color: #bdc3c7;
-    color: #2c3e50;
-    cursor: pointer;
-}
-
-.btn-back:hover {
-    background-color: #95a5a6;
-}
-
-.section {
-    flex: 1;
-    background: white;
-    padding: 15px;
-    border-radius: 6px;
-    box-shadow: 0 0 5px rgba(0,0,0,0.1);
-}
-
-.section h2 {
-    margin-top: 0;
-}
-
-/* COURSE BOX */
+/* COURSE / SESSION */
 .course-box {
     margin: 10px 0;
     padding: 10px;
@@ -189,8 +122,17 @@ button {
     background: #e0e0ff;
 }
 
+/* SECTION */
+.section {
+    width: 100%;
+    margin-top: 20px;
+}
 
-/* Tabella iscritti */
+.section h2 {
+    margin-top: 0;
+}
+
+/* TABLE */
 table {
     width: 100%;
     border-collapse: collapse;
@@ -211,14 +153,74 @@ tr:hover {
     background-color: #f2f2ff;
 }
 
-/* Bottone modifica riga */
+#verbalsContainer {
+    display: block;
+    width: 100%;
+}
+
+
+/* BOTTONI */
+button,
+.btn-action {
+    padding: 8px 14px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.btn-publish {
+    background-color: #34a853;
+    color: white;
+}
+
+.btn-publish:hover {
+    background-color: #27863f;
+}
+
+.btn-verbalize {
+    background-color: #fbbc04;
+    color: #333;
+}
+
+.btn-verbalize:hover {
+    background-color: #d9a300;
+}
+
+.btn-save {
+    background: #3498db;
+    color: white;
+}
+
+.btn-save:hover {
+    background: #2980b9;
+}
+
+.btn-cancel,
+.btn-back {
+    background: #bdc3c7;
+    color: #2c3e50;
+}
+
+.btn-cancel:hover,
+.btn-back:hover {
+    background-color: #95a5a6;
+}
+
+.btn-back {
+    margin-top: 20px;
+}
+
+.btn-multi-insertion {
+    background-color: #34a853;
+    color: white;
+}
+
 .btn-modifica {
     padding: 6px 12px;
-    border: none;
     background-color: #4285f4;
     color: white;
     border-radius: 4px;
-    cursor: pointer;
 }
 
 .btn-modifica:hover {
@@ -230,8 +232,48 @@ tr:hover {
     cursor: not-allowed;
 }
 
+/* LINK */
 a.order-link {
     text-decoration: none;
     color: black;
     font-weight: bold;
+}
+
+/* ENROLLED */
+.enrolled-container {
+    position: relative;
+}
+
+/* OVERLAY + MODAL */
+.overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.45);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+.modal {
+    background: white;
+    padding: 20px;
+    border-radius: 6px;
+    min-width: 280px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.modal-actions {
+    margin-top: 15px;
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+}
+
+/* UTILITY */
+.disabled {
+    pointer-events: none;
+    opacity: 0.5;
 }

@@ -1,6 +1,7 @@
 package model;
 
 import java.util.Arrays;
+import java.util.List;
 
 public enum ExamStatus {
     NOTINSERTED("non inserito"),
@@ -22,5 +23,9 @@ public enum ExamStatus {
                 .filter(examStatus -> examStatus.getLabel().equalsIgnoreCase(label))
                 .findFirst()
                 .orElseThrow(IllegalArgumentException::new);
+    }
+
+    public static List<ExamStatus> getExamsStatus() {
+        return Arrays.asList(values());
     }
 }
