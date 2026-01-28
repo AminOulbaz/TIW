@@ -48,7 +48,9 @@
             </div>
         </c:forEach>
     </div>
+</div>
 
+<div class="container">
     <!-- GESTIONE VERBALI -->
     <div class="section">
         <h2>Gestione Verbali</h2>
@@ -58,8 +60,6 @@
             Verbali
         </div>
     </div>
-
-
 </div>
 
 </body>

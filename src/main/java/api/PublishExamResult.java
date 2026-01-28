@@ -2,22 +2,25 @@ package api;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
+import dto.ExamResultDto;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import dto.ExamResultDto;
 import model.ExamGrade;
+import model.ExamResult;
 import model.ExamStatus;
+import model.User;
 import service.ProfessorService;
 import service.ProfessorServiceFactory;
 
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.List;
 
-@WebServlet("/api/updateExamResult")
-public class UpdateExamResult extends HttpServlet {
+@WebServlet("/api/professor/publish")
+public class PublishExamResult extends HttpServlet {
     ProfessorService professorService;
 
     @Override
@@ -31,19 +34,21 @@ public class UpdateExamResult extends HttpServlet {
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        try {
-            ExamResultDto payload = new Gson().fromJson(req.getReader(), ExamResultDto.class);
-            System.out.println(payload);
-            model.ExamResult examResult = new model.ExamResult();
-            examResult.setExamId(payload.getExamId());
-            examResult.setStudentId(payload.getStudentId());
-            examResult.setGrade(ExamGrade.getExamGrade(payload.getGrade()));
-            examResult.setStatus(ExamStatus.getExamStatus(payload.getStatus()));
-            professorService.updateExamResult(examResult);
-            System.out.println(examResult);
-        } catch (JsonSyntaxException e) {
-            resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "JSON invalido");
+        User user = (User) req.getSession().getAttribute("user");
+        if (user != null) {
+            List<ExamResult> examResults = professorService.getExamResultsByExamSessionId(
+                    Integer.parseInt(req.getParameter("examSessionId"))
+            );
+            for (ExamResult examResult : examResults) {
+                if(examResult.getStatus().equals(ExamStatus.INSERTED)){
+                    examResult.setStatus(ExamStatus.PUBLISHED);
+                    professorService.updateExamResult(examResult);
+                }
+            }
+            resp.setContentType("application/json");
+            resp.setStatus(HttpServletResponse.SC_OK);
         }
-
+        resp.sendError(HttpServletResponse.SC_UNAUTHORIZED);
     }
 }
+

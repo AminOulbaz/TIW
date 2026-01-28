@@ -50,27 +50,9 @@ public class VerbalizeExamSessionController extends HttpServlet {
             professorService.updateExamResult(examResult.getExamResult());
         }
 
-        Verbal verbal = new Verbal();
-        verbal.setExamSession(professorService.getExamSessionByExamSessionId(examSessionId));
-        verbal.setExamResultWithStudents(
-                professorService.getExamResultWithStudentsByExamSessionId(examSessionId).stream().filter(
-                        e -> e.getExamResult().getStatus().equals(ExamStatus.VERBALIZED) ||
-                                e.getExamResult().getStatus().equals(ExamStatus.REFUSED)
-                ).toList()
-        );
-        verbal.setCreationTimestamp(
-                Timestamp.valueOf(LocalDateTime.now())
-        );
-        verbal.setProfessorId(
-                professorService.getProfessorByUsername(user.getUsername())
-                        .getId()
-        );
-        verbal.setExamVerbalId(
-                Verbal.generateCode(
-                        verbal.getExamSession().getId(),
-                        verbal.getProfessorId(),
-                        verbal.getCreationTimestamp()
-                )
+        Verbal verbal = professorService.makeVerbal(
+                professorService.getProfessorByUsername(user.getUsername()),
+                examSessionId
         );
         System.out.println("Debug examVerbalId: "+verbal.getExamVerbalId());
         if(professorService.getAllVerbalsByExamSessionId(examSessionId).isEmpty())

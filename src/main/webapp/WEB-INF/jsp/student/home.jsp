@@ -16,8 +16,7 @@
 <body>
 <!-- HEADER -->
 <div class="header">
-    <h1>Benvenuto, ${student.name} ${student.surname}</h1>
-    <p><strong>Corso di Laurea:</strong> ${student.degreeProgramCode}</p>
+    <h1>Benvenuto, ${student.name} ${student.surname}</h1><x></x>
     <div class="logout">
         <a href="logout">Logout</a>
     </div>
@@ -33,7 +32,7 @@
         <!-- Lista corsi -->
         <c:forEach var="course" items="${courses}">
             <div class="course-box" onclick="toggleExamList('exams-${course.code}')">
-                <strong>${course.name}</strong> (${course.code}) ${course.credits} CFU
+                ${course.name} (${course.code}) ${course.credits} CFU
             </div>
 
             <!-- Appelli del corso -->
@@ -41,7 +40,7 @@
                 <c:forEach var="session" items="${examSessionsByCourse[course.code]}">
                     <div class="exam-entry">
                         <div class="exam-info">
-                            <strong>${session.date}</strong> ${session.type} Aula: ${session.room}
+                            ${session.date} ${session.type} Aula: ${session.room}
                         </div>
 
                         <div class="exam-actions">

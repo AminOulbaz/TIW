@@ -71,7 +71,7 @@ public class ExamResult{
 
     @Override
     public String toString() {
-        return "ExamResult{" +
+        return "ExamResultDto{" +
                 "studentId='" + studentId + '\'' +
                 ", examId=" + examId +
                 ", status=" + status +

@@ -3,11 +3,13 @@ package config;
 import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletContextEvent;
 import jakarta.servlet.ServletContextListener;
+import jakarta.servlet.annotation.WebListener;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
+@WebListener
 public class AppInitializer implements ServletContextListener {
     @Override
     public void contextInitialized(ServletContextEvent sce) {
@@ -27,6 +29,7 @@ public class AppInitializer implements ServletContextListener {
         } catch (ClassNotFoundException | SQLException e) {
             throw new RuntimeException(e);
         }
+        System.out.println("ServletContextListener initialized");
         /*
          * END DATABASE CONNECTION CONFIGURATION
          * */

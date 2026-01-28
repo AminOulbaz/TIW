@@ -1,6 +1,6 @@
 package model;
 
-public class ExamResultWithStudent implements Comparable<ExamResultWithStudent> {
+public class ExamResultWithStudent{
     Student student;
     ExamResult examResult;
     public ExamResultWithStudent(Student student, ExamResult examResult) {
@@ -22,10 +22,5 @@ public class ExamResultWithStudent implements Comparable<ExamResultWithStudent> 
 
     public void setExamResult(ExamResult examResult) {
         this.examResult = examResult;
-    }
-
-    @Override
-    public int compareTo(ExamResultWithStudent o) {
-        return 0;
     }
 }

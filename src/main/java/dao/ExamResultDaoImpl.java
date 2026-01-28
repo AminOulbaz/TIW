@@ -46,7 +46,7 @@ public class ExamResultDaoImpl implements ExamResultDao {
      * @return
      */
     @Override
-    public ExamResult getExamResultByExamSessionIdAndStudentId(int examSessionId, String studentId) {
+    public ExamResult getExamResultByExamSessionIdAndStudentId(int examSessionId, String studentId) throws ExamResultNoExistsException {
         try{
             PreparedStatement psmt = connection.prepareStatement(
                     """

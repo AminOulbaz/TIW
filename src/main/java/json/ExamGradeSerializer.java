@@ -15,7 +15,8 @@ public class ExamGradeSerializer implements JsonSerializer<ExamGrade> {
             Type type,
             JsonSerializationContext jsonSerializationContext) {
         JsonObject obj = new JsonObject();
-        obj.addProperty("label", grade.getLabel());
+        obj.addProperty("label",
+                grade.getLabel());
         return obj;
     }
 }

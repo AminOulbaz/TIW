@@ -37,7 +37,7 @@
             <c:if test="${hasVerbalizable}">
                 <form action="verbalize" method="post" style="display:inline;">
                     <input type="hidden" name="examSessionId" value="${examSession.id}">
-                    <button class="btn-action btn-verbalizza" type="submit">VERBALIZZA</button>
+                    <button class="btn-action btn-verbalize" type="submit">VERBALIZZA</button>
                 </form>
             </c:if>
         </div>

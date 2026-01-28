@@ -3,6 +3,7 @@ package api;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import dao.*;
+import dto.ExamResultDto;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -38,14 +39,11 @@ public class GetEnrolledStudents extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        User user = (User) req.getSession().getAttribute("user");
         int examSessionId = Integer.parseInt(req.getParameter("examSessionId"));
-        List<ExamResultWithStudent> examResultWithStudents =
-                professorService.getExamResultWithStudentsByExamSessionId(examSessionId);
+        List<ExamResultDto> examResults =
+                professorService.getExamResultDtoWithStudentsByExamSessionId(examSessionId);
         resp.setContentType("application/json");
         resp.setCharacterEncoding("UTF-8");
-        resp.getWriter().write(
-                ExamResultsGsonFactory.getGson().toJson(examResultWithStudents)
-        );
+        resp.getWriter().write(new Gson().toJson(examResults));
     }
 }

@@ -10,6 +10,7 @@ import json.ExamResultsGsonFactory;
 import model.ExamGrade;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 @WebServlet("/api/examGrades")
@@ -21,9 +22,10 @@ public class GetExamGrades extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        List<ExamGrade> examGrades = ExamGrade.getExamGrades();
-        String json = ExamResultsGsonFactory.getGson().toJson(examGrades);
+        List<String> examStatusLabels = new ArrayList<>();
+        ExamGrade.getExamGrades().forEach(e -> examStatusLabels.add(e.getLabel()));
+        String json = new Gson().toJson(examStatusLabels);
         resp.setContentType("application/json");
-        resp.getWriter().println(json);
+        resp.getWriter().write(json);
     }
 }

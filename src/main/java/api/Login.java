@@ -6,6 +6,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import json.UserGsonFactory;
 import model.User;
 import service.AuthService;
@@ -38,14 +39,27 @@ public class Login extends HttpServlet {
         String username = req.getParameter("username");
         String password = req.getParameter("password");
 
-        User user = authService.getUser(username);
-        if(authService.login(username, password)){
-            req.getSession().setAttribute("user", user);
-            res.setContentType("application/json");
-            res.getWriter().write(UserGsonFactory.getGson().toJson(user));
-        }
-        else
+        if (authService.login(username, password)) {
+
+            User user = authService.getUser(username);
+
+            HttpSession oldSession = req.getSession(false);
+            if (oldSession != null) {
+                oldSession.invalidate();
+            }
+
+            HttpSession session = req.getSession(true);
+            session.setAttribute("user", user);
+
+            res.setContentType("application/json;charset=UTF-8");
+            res.getWriter().write(
+                    UserGsonFactory.getGson().toJson(user)
+            );
+
+        } else {
             res.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        }
+
     }
 }
 

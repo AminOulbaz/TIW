@@ -1,56 +1,79 @@
-document.addEventListener("DOMContentLoaded", () => {
+const columns = new Map([
+    ["Matricola", {
+        type: "string",
+        accessor: s => s.studentId
+    }],
+    ["Cognome", {
+        type: "string",
+        accessor: s => s.surname
+    }],
+    ["Nome", {
+        type: "string",
+        accessor: s => s.name
+    }],
+    ["Email", {
+        type: "string",
+        accessor: s => s.email
+    }],
+    ["Corso", {
+        type: "string",
+        accessor: s => s.degreeProgramCode
+    }],
+    ["Voto", {
+        type: "string",
+        accessor: s => s.grade
+    }],
+    ["Stato", {
+        type: "string",
+        accessor: s => s.status
+    }],
+    ["Sessione", {
+        type: "number",
+        accessor: s => s.examId
+    }]
+]);
+let examGrades;
+let examsStatuses;
 
-    // 1️⃣ Dati del professore
+document.addEventListener("DOMContentLoaded", () => {
+    //recupero dei dati del professore: nome e cognome
     fetch("/api/professor/me",{
         method: "POST"
     })
         .then(res => res.json())
-        .then(p => {
+        .then(professor => {
             document.getElementById("welcome").textContent =
-                `Benvenuto Professore ${p.name} ${p.surname}`;
+                "Benvenuto Prof. " +professor.surname  +" "+  professor.name;
         });
 
-    // 2️⃣ Corsi + appelli
+    // recupero dei voti
+    fetch("/api/examGrades")
+        .then(res => res.json())
+        .then(data => examGrades = data);
+
+    // recupero degli stati di valutazione
+    fetch("/api/examStatus")
+        .then(res => res.json())
+        .then(data => examsStatuses = data);
+
+    // recupero dei corsi e degli appelli associati ai corsi
     fetch("/api/courses")
         .then(res => res.json())
         .then(data => renderCourses(data));
+
+    //recupero dei verbali generati dal professore
+    getVerbals();
 });
+function logout() {
+    fetch("/api/logout",
+        { method: "POST" })
+        .then(
+            () =>
+                window.location.href = "/html/login.html"
+        );
+}
 
-const columns = new Map([
-    ["Matricola", {
-        type: "string",
-        accessor: s => s.student.id
-    }],
-    ["Cognome", {
-        type: "string",
-        accessor: s => s.student.surname
-    }],
-    ["Nome", {
-        type: "string",
-        accessor: s => s.student.name
-    }],
-    ["Email", {
-        type: "string",
-        accessor: s => s.student.email
-    }],
-    ["Corso", {
-        type: "string",
-        accessor: s => s.student.degreeProgramCode
-    }],
-    ["Voto", {
-        type: "number",
-        accessor: s => Number(s.examResult.grade.label)
-    }],
-    ["Stato", {
-        type: "string",
-        accessor: s => s.examResult.status.label
-    }],
-    ["Session", {
-        type: "number",
-        accessor: s => s.examResult.examId
-    }]
-]);
-
+// BEGIN RENDERING MANAGEMENT FUNCTION
 function renderCourses(courses) {
     const container = document.getElementById("coursesContainer");
     container.innerHTML = "";
@@ -61,14 +84,15 @@ function renderCourses(courses) {
         const courseBox = document.createElement("div");
         courseBox.className = "course-box";
         courseBox.textContent = `${c.name} (${c.code})`;
-        courseBox.onclick = () => toggleSessions(c.code);
+        courseBox.onclick = () => toggleBox("sessions-" + c.code);
 
-        // session list
+        // crea la session list
         const sessionList = document.createElement("div");
         sessionList.className = "session-list";
         sessionList.id = "sessions-" + c.code;
         sessionList.style.display = "none";
 
+        // inserisce gli appelli nella session list
         c.examSessions.forEach(s => {
             const item = document.createElement("div");
             item.className = "session-item";
@@ -81,34 +105,33 @@ function renderCourses(courses) {
         container.appendChild(sessionList);
     });
 }
-function toggleSessions(courseCode) {
-    const box = document.getElementById("sessions-" + courseCode);
+/*
+* Il display è importante definirlo in modo corretto per ogni elemento altrimenti la semantica si rompe
+* */
+function toggleBox(id) {
+    const box = document.getElementById(id);
     box.style.display = (box.style.display === "block") ? "none" : "block";
 }
-function logout() {
-    fetch("/api/logout",
-        { method: "POST" })
-        .then(
-            () =>
-                window.location.href = "/html/login.html"
-        );
+function toggleTable(id) {
+    const table = document.getElementById(id);
+    table.style.display = (table.style.display === "table") ? "none" : "table";
 }
-
-// BEGIN RENDERING MANAGEMENT FUNCTION
+function toogleRow(id){
+    const row = document.getElementById(id);
+    row.style.display = (row.style.display === "table-row") ? "none" : "table-row";
+}
 function showEnrolledStudents(examSessionElement, examSessionId) {
-    // toggle: se già aperto → chiudi
-    const existing = examSessionElement.querySelector(".enrolled-container");
-    if (existing) {
-        existing.remove();
-        return;
+    let enrolledContainer = examSessionElement.querySelector(".enrolled-container");
+    if (enrolledContainer != null) {
+        examSessionElement.removeChild(enrolledContainer);
     }
 
     // contenitore iscritti
-    const container = document.createElement("div");
-    container.className = "enrolled-container";
-    container.id = "enrolled-container-"+examSessionId;
-    container.textContent = "Caricamento iscritti...";
-    examSessionElement.appendChild(container);
+    enrolledContainer = document.createElement("div");
+    enrolledContainer.className = "enrolled-container";
+    enrolledContainer.id = enrolledContainer.className +"-"+ examSessionId;
+    enrolledContainer.textContent = "Caricamento iscritti...";
+    examSessionElement.appendChild(enrolledContainer);
 
     fetch(`/api/enrolled?examSessionId=${examSessionId}`)
         .then(res => {
@@ -117,9 +140,9 @@ function showEnrolledStudents(examSessionElement, examSessionId) {
             }
             return res.json();
         })
-        .then(students => renderEnrolledStudents(container, students))
+        .then(students => renderEnrolledStudents(enrolledContainer, students))
         .catch(err => {
-            container.textContent = "Errore nel caricamento iscritti";
+            enrolledContainer.textContent = "Errore nel caricamento iscritti";
             console.error(err);
         });
 }
@@ -129,6 +152,7 @@ function renderEnrolledStudents(container, students) {
         return;
     }
 
+    // storage dei dati degli studenti per l'ordinamento locale e l'aggiornamento senza interagire con il server ogni volta
     if(typeof (Storage) !== "undefined"){
         if(sessionStorage.getItem("rows") === null){
             /*
@@ -144,6 +168,7 @@ function renderEnrolledStudents(container, students) {
                 Session: examResult.examId
               }
             * */
+            //per ogni container vengono associate delle righe che rispecchiano gli studenti iscritti
             const key = "rows-"+container.id;
             sessionStorage.setItem(key, JSON.stringify(
                 {
@@ -160,82 +185,232 @@ function renderEnrolledStudents(container, students) {
                     }
                 })
             );
-            console.log(JSON.parse(sessionStorage.getItem(key)));
-            renderTable(container, JSON.parse(sessionStorage.getItem(key))["students"]);
+            container.innerHTML = "";
+            renderTable(container);
         }
     }
     else{ console.log("Sorry, no Web storage support!"); }
 }
-function renderTable(container, rows){
-    container.innerHTML = "";
-    const table = document.createElement("table");
+//pulizia dei valori precedenti per la rigenerazione del container associato alla sessione selezionata
+function sanityCheckEnrolledStudents(container){
+    const table = container.querySelector(".enrolled-table");
+    if(table != null){
+        container.removeChild(table);
+    }
+    const multipleInsertion = container.querySelector(".btn-multi-insertion");
+    if(multipleInsertion != null){
+        container.removeChild(multipleInsertion);
+    }
+    const publishExamResult = container.querySelector(".btn-publish");
+    if(publishExamResult != null){
+        container.removeChild(publishExamResult);
+    }
+    const verbalizeExamResult = container.querySelector(".btn-verbalize");
+    if(verbalizeExamResult != null){
+        container.removeChild(verbalizeExamResult);
+    }
+}
+//rendering della tabella degli iscritti(rows) nel container passato come parametro
+function renderTable(container){
+    // sanity check
+    sanityCheckEnrolledStudents(container);
+
+    //generazione della tabella degli iscritti
+    table = document.createElement("table");
     table.className = "enrolled-table";
     table.onclick = (e) => {
         e.stopPropagation();
     };
 
+    //generazione delle colonne della tabella degli iscritti
     const thead = table.appendChild(document.createElement("thead"));
     const tr = document.createElement("tr");
     thead.appendChild(tr);
-
     columns.forEach(
         (meta, columnName) => {
-            if(columnName !== "Session") {
+            if(columnName !== "Sessione") {
                 const th = document.createElement("th");
-                th.innerHTML = columnName;
+                th.textContent = columnName;
                 th.id = container.id + "-" + columnName;
-                th.onclick = () => {
-                    const sortedRows = sortRows(
-                        container.id,
-                        columnName
-                    );
-                    renderTable(container, sortedRows);
+                th.onclick = (event) => {
+                    event.stopPropagation();
+                    sortRows(container.id, columnName);
+                    refreshContainer(container.id);
                 };
                 tr.appendChild(th);
             }
         }
     );
+    //colonna di modifica
+    const thModify = document.createElement("th");
+    thModify.textContent = "Modifica";
+    thModify.id = container.id + "-" + thModify.textContent;
+    tr.appendChild(thModify);
 
+    //generazione delle righe associate ai risultati della sessione selezionata
     table.appendChild(document.createElement("tbody"));
     const tbody = table.querySelector("tbody");
-    rows.forEach((row, rowIndex) => {
+    const students = getSessionStorageStudents(getKey(container.id));
+    students.forEach((row, rowIdx) => {
         const rowHTML = document.createElement("tr");
-
         columns.forEach((meta, columnName) => {
-            if(columnName !== "Session") {
+            if(columnName !== "Sessione") {
                 const td = document.createElement("td");
                 td.textContent = row[columnName];
                 rowHTML.appendChild(td);
             }
         });
 
-        rowHTML.onclick = () => {
+        //generazione del pulsante di modifica del risultato
+        const td = document.createElement("td");
+        const button = document.createElement("button");
+        button.textContent = "Modifica";
+        button.className =
+            row["Stato"] === 'non inserito' || row["Stato"] === 'inserito' ?
+                "btn-modifica" : "btn-modifica-disabled";
+        button.onclick = (event) => {
+            event.stopPropagation();
             openModal(container, row, (newVote, newStatus) => {
                 row.Voto = newVote;
                 row.Stato = newStatus;
 
-                const key = "rows-" + container.id;
-                const data = JSON.parse(sessionStorage.getItem(key));
-                data.students[rowIndex] = row;
-                sessionStorage.setItem(key, JSON.stringify(data));
-
-                renderTable(container, data.students);
+                updateSessionStorageRow(getKey(container.id), row, rowIdx);
+                refreshContainer(container.id);
             });
         };
-
-
+        td.appendChild(button);
+        rowHTML.appendChild(td);
         tbody.appendChild(rowHTML);
     });
-    if(enableMultiInsert(rows)){
-        // Bottone inserimento multiplo
+
+    //abilitazione delle funzionalita comuni: inserimento multiplo, pubblicazione e verbalizzazione
+    if(enableMultiInsert(students)){
         const multiInsertBtn = document.createElement("button");
         multiInsertBtn.textContent = "INSERIMENTO MULTIPLO";
-        multiInsertBtn.onclick = () => openMultiInsertModal(container, rows);
+        multiInsertBtn.className = "btn-multi-insertion";
+        multiInsertBtn.onclick = (event) => {
+            event.stopPropagation();
+            openMultiInsertModal(container.id);
+        }
         container.appendChild(multiInsertBtn);
+    }
+    if(enablePublishing((students))){
+        const publishBtn = document.createElement("button");
+        publishBtn.textContent = "PUBBLICA";
+        publishBtn.className = "btn-publish";
+        publishBtn.onclick = (event) => {
+            event.stopPropagation();
+            publishExamResults(container.id);
+        }
+        container.appendChild(publishBtn);
+    }
+    if(enableVerbalizing((students))){
+        const verbalizeBtn = document.createElement("button");
+        verbalizeBtn.textContent = "VERBALIZZA";
+        verbalizeBtn.className = "btn-verbalize";
+        verbalizeBtn.onclick = (event) => {
+            event.stopPropagation();
+            verbalizeExamResults(container.id);
+        }
+        container.appendChild(verbalizeBtn);
     }
     container.appendChild(table);
 }
-// END TABLE MANAGEMENT FUNCTION
+//refresh del container quando i dati degli studenti vengono modificati
+function refreshContainer(containerId){
+    renderTable(document.getElementById(containerId));
+}
+function renderVerbals(verbals){
+    const verbalsBox = document.getElementById("verbalsContainer");
+    verbalsBox.innerHTML = "";
+    verbalsBox.className = "course-box";
+    verbalsBox.textContent = "Elenco Verbali";
+
+    //tabella dei verbali
+    const tableVerbals = document.createElement("table");
+    tableVerbals.id = "verbals"
+    verbalsBox.onclick = () => toggleTable(tableVerbals.id);
+    tableVerbals.style.display = "none";
+
+    const header = ["Codice","Data creazione", "Corso", "Appello"];
+    const verbalKeys = ["examVerbalId","creationTimestamp","examDate","courseCode"];
+    const detailHeader = ["Nome","Cognome", "Matricola", "Voto"];
+    const verbalDetailKeys = ["name","surname","identifier","vote"];
+    const thead = document.createElement("thead");
+    const tr = document.createElement("tr");
+    header.forEach(header =>{
+        const th = document.createElement("th");
+        th.textContent = header;
+        tr.appendChild(th);
+    });
+    thead.appendChild(tr);
+    tableVerbals.appendChild(thead);
+
+    const tbody = document.createElement("tbody");
+    verbals.forEach(verbal => {
+        //riga principale in cui vengono visualizzati i dati del verbale
+        const mainTr = document.createElement("tr");
+        mainTr.className = "main-row";
+        verbalKeys.forEach(key =>{
+           const td = document.createElement("td");
+           td.textContent = verbal[key];
+           mainTr.appendChild(td);
+        });
+
+        //riga nascosta in cui sono contenuti gli esiti verbalizzati associati al verbale principale
+        const detailsTr =  document.createElement("tr");
+        detailsTr.id = verbal.examVerbalId;
+        detailsTr.className = "detail-row";
+        detailsTr.style.display = "none";
+        mainTr.onclick = (event) => {
+          event.stopPropagation();
+          toogleRow(detailsTr.id);
+        };
+
+        //cella di dimensione pari al numero di colonne in cui verrà inserita la tabella degli studenti
+        const detailsTd  = document.createElement("td");
+        detailsTd.colSpan = verbalKeys.length;
+        const detailsTable = document.createElement("table");
+        detailsTable.style.width = "100%";
+        detailsTable.style.borderCollapse = "collapse";
+        const detailsThead = document.createElement("thead");
+        const detailsTheadTr = document.createElement("tr");
+        detailHeader.forEach(header => {
+            const th = document.createElement("th");
+            th.textContent = header;
+            detailsTheadTr.appendChild(th);
+        });
+        detailsThead.appendChild(detailsTheadTr);
+        detailsTable.appendChild(detailsThead);
+        //inserimento degli studenti
+        const detailTbody = document.createElement("tbody");
+        verbal.students.forEach(student => {
+            const detailTr = document.createElement("tr");
+            verbalDetailKeys.forEach(key => {
+                const td = document.createElement("td");
+                td.textContent = student[key];
+                detailTr.appendChild(td);
+            });
+            detailTbody.appendChild(detailTr);
+        });
+        detailsTable.appendChild(detailTbody);
+
+
+        tbody.appendChild(mainTr);
+        detailsTd.appendChild(detailsTable);
+        detailsTr.appendChild(detailsTd);
+        tbody.appendChild(detailsTr);
+    });
+    tableVerbals.appendChild(tbody);
+    verbalsBox.appendChild(tableVerbals);
+}
+function getVerbals(){
+    //recupero dei verbali generati dal professore
+    fetch("/api/verbals")
+        .then(res => res.json())
+        .then(data => renderVerbals(data));
+}
+// END RENDERING MANAGEMENT FUNCTION
 
 // BEGIN SORTING FUNCTION
 function sort(rows, column, sortState) {
@@ -277,8 +452,6 @@ function sortRows(id, column){
         JSON.parse(sessionStorage.getItem(key))["students"],
         column, sortState);
     updateSessionStorageStudents(key, sortedRows);
-    console.log(sortedRows);
-    console.log(sortState);
     return sortedRows;
 }
 // END SORTING FUNCTION
@@ -288,7 +461,7 @@ function updateSessionStorage(key, value){
     sessionStorage.setItem(key,value);
 }
 function updateSessionStorageSortStates(key, sortState){
-    let values = JSON.parse(sessionStorage.getItem(key));
+    const values = JSON.parse(sessionStorage.getItem(key));
     values["sortState"] = sortState;
     updateSessionStorage(key,JSON.stringify(values));
 }
@@ -297,31 +470,45 @@ function updateSessionStorageStudents(key, students){
     values["students"] = students;
     updateSessionStorage(key,JSON.stringify(values));
 }
+function updateSessionStorageRow(key, row, rowIdx){
+    const values = getSessionStorageContainer(key);
+    values.students[rowIdx] = row;
+    updateSessionStorage(key, JSON.stringify(values));
+}
+function getSessionStorageContainer(key){
+    return JSON.parse(sessionStorage.getItem(key));
+}
+function getSessionStorageStudents(key){
+    return getSessionStorageContainer(key).students;
+}
+function getKey(containerId){
+    return "rows-"+containerId;
+}
 // END SESSION STORAGE MANAGEMENT FUNCTIONS
 
 // BEGIN VOTE MODIFICATION MANAGEMENT
 function openModal(container, row, onSave) {
-    // overlay (oscura)
+    // overlay per oscurare lo sfondo sottostante all'interfaccia modale
     const overlay = document.createElement("div");
-    overlay.className = "table-overlay";
+    overlay.className = "overlay";
 
     // modal
     const modal = document.createElement("div");
-    modal.className = "table-modal";
+    modal.className = "modal";
 
     const h3 = document.createElement("h3");
-    h3.textContent = "Modifica esito";
+    h3.textContent = "Inserisci esito";
     modal.appendChild(h3);
 
     buildModal(modal).then(() => {
         document.getElementById("saveBtn").onclick = () => {
             const newVote = modal.querySelector("#voteInput").value;
-            const newStatus = modal.querySelector("#statusInput").value;
+            const newStatus = "inserito";
 
             onSave(newVote, newStatus);
             updateExamResult({
-                "examId": Number(row["Session"]),
-                "studentId": row["Matricola"],
+                "examId": Number(row.Sessione),
+                "studentId": row.Matricola,
                 "grade": newVote,
                 "status": newStatus
             }).then(() => overlay.remove());
@@ -350,122 +537,85 @@ function updateExamResult(payload) {
     );
 }
 async function buildModal(modal) {
-
-    // VOTO
-    const gradesRes = await fetch("/api/examGrades");
-    const grades = await gradesRes.json();
-
     const voteSelect = document.createElement("select");
-    voteSelect.id ="voteInput";
     const voteLabel = document.createElement("label");
+    voteSelect.id ="voteInput";
     voteLabel.textContent = "Voto";
     voteLabel.setAttribute("for", voteSelect.id);
     modal.appendChild(voteLabel);
-    grades.forEach(g => {
+    examGrades.forEach(examGrade => {
         const opt = document.createElement("option");
-        opt.textContent = g.label;
+        opt.value = examGrade;
+        opt.textContent = examGrade;
         voteSelect.appendChild(opt);
     });
     modal.appendChild(voteSelect);
 
-    // STATO
-    const statusRes = await fetch("/api/examStatus");
-    const statuses = await statusRes.json();
-
-    const statusSelect = document.createElement("select");
-    statusSelect.id ="statusInput";
-    const statusLabel = document.createElement("label");
-    statusLabel.textContent = "Stato";
-    statusLabel.setAttribute("for", statusSelect.id);
-    modal.appendChild(statusLabel);
-
-    statuses.forEach(s => {
-        const opt = document.createElement("option");
-        opt.textContent = s.label;
-        statusSelect.appendChild(opt);
-    });
-    modal.appendChild(statusSelect);
-
-    // ACTIONS (QUI sei sicuro che tutto sopra è pronto)
     const actions = document.createElement("div");
     actions.className = "modal-actions";
-
     const saveBtn = document.createElement("button");
     saveBtn.id = "saveBtn";
     saveBtn.textContent = "Salva";
-
+    actions.appendChild(saveBtn);
     const cancelBtn = document.createElement("button");
     cancelBtn.id = "cancelBtn";
     cancelBtn.textContent = "Annulla";
-
-    actions.appendChild(saveBtn);
     actions.appendChild(cancelBtn);
     modal.appendChild(actions);
 }
-function enableMultiInsert(rows){
-    let enable = false;
-    let count = 0;
-    rows.forEach(r => {
-        if(r.Stato === "non inserito") {
-            enable = true;
-            count++;
-        }
-    });
-    return enable && count > 1;
-}
-function openMultiInsertModal(container, rows) {
-    // Filtra solo le righe "non inserite"
-    const rowsToInsert = rows.filter(r => {
-        return r.Stato === "non inserito" || r.Voto === "\<vuoto\>";
-    });
-
-    if(rowsToInsert.length === 0) {
-        alert("Non ci sono studenti da inserire");
-        return;
-    }
-
+function openMultiInsertModal(containerId) {
     // Overlay oscura
     const overlay = document.createElement("div");
-    overlay.className = "table-overlay";
-
+    overlay.className = "overlay";
     // Modal
     const modal = document.createElement("div");
-    modal.className = "table-modal";
-
+    modal.className = "modal";
     // Header
     modal.innerHTML = `<h3>Inserimento multiplo</h3>`;
 
-    // Tabella dentro modal
+    // Tabella dove vengono visualizzati le informazioni degli studenti e la select per scegliere il voto da inserire
+    //Intestazione della tabella
+    const columns = ["Matricola","Nome","Cognome","Email", "Corso","Voto"];
     const table = document.createElement("table");
     table.className = "multi-insert-table";
     const thead = table.appendChild(document.createElement("thead"));
     const trHead = document.createElement("tr");
-    ["Matricola","Nome","Cognome","Voto"].forEach(col => {
+    columns.forEach(column => {
         const th = document.createElement("th");
-        th.textContent = col;
+        th.textContent = column;
         trHead.appendChild(th);
     });
     thead.appendChild(trHead);
 
+    //corpo della tabella
     const tbody = table.appendChild(document.createElement("tbody"));
-    rowsToInsert.forEach((row, idx) => {
-        const tr = document.createElement("tr");
-        ["Matricola","Nome","Cognome"].forEach(c => {
-            const td = document.createElement("td");
-            td.textContent = row[c];
-            tr.appendChild(td);
-        });
-        const tdInput = document.createElement("td");
-        const input = document.createElement("input");
-        input.type = "number";
-        input.min = 0;
-        input.max = 30;
-        input.dataset.rowIndex = idx; // memorizza indice
-        tdInput.appendChild(input);
-        tr.appendChild(tdInput);
-        tbody.appendChild(tr);
+    getSessionStorageStudents(getKey(containerId)).forEach((row, rowIdx) => {
+        if(row.Stato === "non inserito") {
+            const tr = document.createElement("tr");
+            columns.forEach((column) => {
+                const td = document.createElement("td");
+                if (column === "Voto") {
+                    const selectVote = document.createElement("select");
+                    examGrades.forEach(examGrade => {
+                        const opt = document.createElement("option");
+                        opt.value = examGrade;
+                        opt.textContent = examGrade;
+                        selectVote.appendChild(opt);
+                    });
+                    selectVote.addEventListener("change", e => {
+                        // aggiorna il voto associato alla riga
+                        row.Voto = e.target.value;
+                        row.Stato = row.Voto === "<vuoto>" ? "non inserito" : "inserito";
+                        updateSessionStorageRow(getKey(containerId), row, rowIdx);
+                    });
+                    td.appendChild(selectVote);
+                } else
+                    td.textContent = row[column];
+                tr.appendChild(td);
+            });
+            tbody.appendChild(tr);
+        }
     });
-
     modal.appendChild(table);
 
     // Bottoni azioni
@@ -473,41 +623,27 @@ function openMultiInsertModal(container, rows) {
     actionsDiv.className = "modal-actions";
 
     const sendBtn = document.createElement("button");
-    sendBtn.textContent = "INVIA";
+    sendBtn.textContent = "INSERISCI";
     sendBtn.onclick = () => {
         const payloads = [];
-        tbody.querySelectorAll("input").forEach((inp, i) => {
-            if(inp.value) {
-                const row = rowsToInsert[i];
-                payloads.push({
-                    examId: Number(row["Session"]),
-                    studentId: row["Matricola"],
-                    grade: Number(inp.value),
-                    status: "verbalizzato"
-                });
-
-                // Aggiorna lo stato della riga locale
-                row.Stato = "verbalizzato";
-                row.Voto = Number(inp.value);
-            }
+        const filteredRows = getSessionStorageStudents(getKey(containerId)).filter(
+            r => r.Stato === "inserito"
+        )
+        filteredRows.forEach(row => {
+            payloads.push(getPayload(row));
         });
-
-        if(payloads.length > 0) {
-            updateMultipleExamResults(payloads)
-                .then(() => {
-                    overlay.remove();
-                    // aggiorna tabella principale
-                    renderTable(container, rows);
-                })
-                .catch(err => alert("Errore invio voti: " + err));
-        } else {
-            alert("Inserire almeno un voto.");
-        }
+        updateMultipleExamResults(
+            payloads,"inserimento", filteredRows[0].Sessione).then(() => {
+            overlay.remove();
+            refreshContainer(containerId);
+        });
     };
 
     const cancelBtn = document.createElement("button");
-    cancelBtn.textContent = "Annulla";
-    cancelBtn.onclick = () => overlay.remove();
+    cancelBtn.textContent = "ANNULLA";
+    cancelBtn.onclick = () => {
+        overlay.remove();
+    };
 
     actionsDiv.appendChild(sendBtn);
     actionsDiv.appendChild(cancelBtn);
@@ -516,14 +652,96 @@ function openMultiInsertModal(container, rows) {
     overlay.appendChild(modal);
     document.body.appendChild(overlay);
 }
-function updateMultipleExamResults(payloads) {
-    return fetch("/api/updateExamResult", {
+function publishExamResults(containerId){
+    // pubblica solo gli esami di cui il professore ha inserito un esito
+    getSessionStorageStudents(getKey(containerId)).forEach((row,rowIdx) => {
+      if(row.Stato === "inserito"){
+          const rowPublished = row;
+          rowPublished.Stato = "pubblicato";
+          updateSessionStorageRow(getKey(containerId),rowPublished,rowIdx);
+      }
+    })
+    const filteredRows = getSessionStorageStudents(getKey(containerId)).filter(
+        row => row.Stato === "pubblicato"
+    )
+    const payloads = [];
+    filteredRows.forEach(row => payloads.push(getPayload(row)));
+    updateMultipleExamResults(payloads,"pubblicazione", filteredRows[0].Sessione).then(() => refreshContainer(containerId));
+}
+async function verbalizeExamResults(containerId) {
+    // verbalizza solo gli esiti che sono stati pubblicati dal professore o rifiutati dallo studente
+    getSessionStorageStudents(getKey(containerId)).forEach((row, rowIdx) => {
+        if (row.Stato === "pubblicato" || row.Stato === "rifiutato") {
+            const rowVerbalized = row;
+            rowVerbalized.Stato = "verbalizzato";
+            updateSessionStorageRow(getKey(containerId), rowVerbalized, rowIdx);
+        }
+    })
+    const filteredRows = getSessionStorageStudents(getKey(containerId)).filter(
+        row => row.Stato === "verbalizzato"
+    )
+    const payloads = [];
+    filteredRows.forEach(row => payloads.push(getPayload(row)));
+    try{
+        await updateMultipleExamResults(
+            payloads,
+            "verbalizzazione",
+            filteredRows[0].Sessione
+        );
+
+        refreshContainer(containerId);
+        getVerbals();
+    } catch (err) {
+        console.error(err);
+    }
+}
+async function updateMultipleExamResults(rawPayload, type, examId) {
+    const payload = {
+        payload: rawPayload,
+        type: type,
+        examId: examId
+    };
+
+    return fetch("/api/updateExamResults", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(payloads)
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(payload)
     }).then(res => {
-        if(!res.ok) throw new Error("Errore server");
-        return res.json();
+        if (!res.ok)
+            throw new Error("Errore aggiornamento esiti");
+        return res;
     });
 }
+function getPayload(row){
+    return {
+        "examId": Number(row.Sessione),
+        "studentId": row.Matricola,
+        "grade": row.Voto,
+        "status": row.Stato
+    };
+}
 // END VOTE MODIFICATION MANAGEMENT
+
+// BEGIN ENABLING EVENT MODIFICATION EXAMRESULT STATUS MANAGEMENT
+function enableVerbalizing(rows){
+    return enablingEvent(rows, "pubblicato") > 0 || enablingEvent(rows, "rifiutato") > 0;
+}
+function enablePublishing(rows){
+    return enablingEvent(rows, "inserito");
+}
+function enableMultiInsert(rows){
+    return enablingEvent(rows, "non inserito") > 1;
+}
+//funzione che conta le occorenze filtrate da filter
+function enablingEvent(rows, filter){
+    let count = 0;
+    rows.forEach(r => {
+        if(r.Stato === filter) {
+            count++;
+        }
+    });
+    return count;
+}
+// END ENABLING EVENT MODIFICATION EXAMRESULT STATUS MANAGEMENT
